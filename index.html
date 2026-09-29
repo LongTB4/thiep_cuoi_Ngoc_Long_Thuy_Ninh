@@ -131,7 +131,7 @@
                     "@id": "https://jejuwedding.vn/thiep-cuoi/ngoc-long-thuy-ninh/#webpage"
                 }
             }
-        ]
+        ],
     }</script>
     <!-- /Plugin SEO WordPress Rank Math -->
 
@@ -967,40 +967,56 @@
                 <div class="elementor-widget-container">
                     <link rel="stylesheet"
                           href="thiep_cuoi_on/cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-                    <audio id="myAudio">
-                        <source src="../../..//thiep_cuoi_on/10_15_anh/In_Love.mp3" type="audio/mpeg">
-                        Your browser does not support the audio element.
+
+                    <audio id="myAudio" loop>
+                        <source src="./thiep_cuoi_on/10_15_anh/In_Love.mp3" type="audio/mpeg">
                     </audio>
 
-                    <button id="playPauseBtn" style="font-size: 16px; border: none; background: none;">
-                        <i id="icon" class="fas fa-play"></i>
+                    <button id="playPauseBtn"
+                            style="font-size: 16px; border: none; background: none; cursor: pointer;">
+                        <i id="icon" class="fas fa-pause"></i>
                     </button>
-                    <script>
-                        document.addEventListener("DOMContentLoaded", function () {
-                            var audio = document.getElementById("myAudio");
-                            var playPauseBtn = document.getElementById("playPauseBtn");
-                            var icon = document.getElementById("icon");
 
-                            // Thêm sự kiện click để Play/Pause audio
-                            playPauseBtn.addEventListener("click", function () {
-                                if (audio.paused) {
-                                    audio.play();
-                                    icon.classList.remove("fa-play");
-                                    icon.classList.add("fa-pause");
-                                } else {
-                                    audio.pause();
-                                    icon.classList.remove("fa-pause");
-                                    icon.classList.add("fa-play");
-                                }
+                    <script>
+                        const audio = document.getElementById("myAudio");
+                        const playPauseBtn = document.getElementById("playPauseBtn");
+                        const icon = document.getElementById("icon");
+
+                        // Tự động phát khi trang tải
+                        window.addEventListener("load", function () {
+                            audio.play().catch(function (error) {
+                                console.log("Trình duyệt chặn autoplay:", error);
+                                icon.className = "fas fa-play";
                             });
                         });
 
+                        // Bấm nút để Play / Pause
+                        playPauseBtn.addEventListener("click", function () {
+                            if (audio.paused) {
+                                audio.play();
+                                icon.className = "fas fa-pause";
+                            } else {
+                                audio.pause();
+                                icon.className = "fas fa-play";
+                            }
+                        });
+
+                        // Nếu nhạc phát thành công thì hiện icon Pause
+                        audio.addEventListener("play", function () {
+                            icon.className = "fas fa-pause";
+                        });
+
+                        // Nếu nhạc bị dừng thì hiện icon Play
+                        audio.addEventListener("pause", function () {
+                            icon.className = "fas fa-play";
+                        });
                     </script>
                 </div>
+
             </div>
         </div>
     </div>
-</div>
+    </div>
 <script type="speculationrules">
     {"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/thiep-cuoi/*"},{"not":{"href_matches":["/thiep-cuoi/wp-*.php","/thiep-cuoi/wp-admin/*","/thiep-cuoi/wp-content/uploads/*","/thiep-cuoi/wp-content/*","/thiep-cuoi/wp-content/plugins/*","/thiep-cuoi/wp-content/themes/hello-theme-NgocNguyen/*","/thiep-cuoi/wp-content/themes/hello-elementor/*","/thiep-cuoi/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
 </script>
