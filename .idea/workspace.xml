@@ -42,6 +42,7 @@
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;D:/@anh_cuoi/TM&quot;,
@@ -75,7 +76,9 @@
       <option name="presentableId" value="Default" />
       <updated>1790652424324</updated>
       <workItem from="1790652425415" duration="846000" />
-      <workItem from="1790653302502" duration="11127000" />
+      <workItem from="1790653302502" duration="11779000" />
+      <workItem from="1790691835578" duration="1370000" />
+      <workItem from="1790693316942" duration="2751000" />
     </task>
     <servers />
   </component>

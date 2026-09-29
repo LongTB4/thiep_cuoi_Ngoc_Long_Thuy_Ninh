@@ -826,37 +826,10 @@
                 <div class="elementor-widget-container">
                     <section id="comments" class="comments-area">
 
-                        <h2 class="title-comments">
-                            Một bình luận </h2>
+                        <h2 class="title-comments">Đang tải lời chúc...</h2>
 
-
-                        <ol class="comment-list">
-                            <li id="comment-12445" class="comment even thread-even depth-1">
-                                <article id="div-comment-12445" class="comment-body">
-                                    <footer class="comment-meta">
-                                        <div class="comment-author vcard">
-                                            <img alt='' src='https://secure.gravatar.com/avatar/?s=42&amp;d=mm&amp;r=g'
-                                                 srcset='https://secure.gravatar.com/avatar/?s=84&#038;d=mm&#038;r=g 2x'
-                                                 class='avatar avatar-42 photo avatar-default' height='42' width='42'/>
-                                            <b class="fn">Bích Thảo</b> <span class="says">viết:</span></div>
-                                        <!-- .comment-author -->
-
-                                        <div class="comment-metadata">
-                                            <a href="index.html#comment-12445">
-                                                <time datetime="2026-09-29T09:05:33+07:00">29 Tháng 9, 2026 lúc 9:05
-                                                    sáng
-                                                </time>
-                                            </a></div><!-- .comment-metadata -->
-
-                                    </footer><!-- .comment-meta -->
-
-                                    <div class="comment-content">
-                                        <p>Chúc cô bạn của tui luôn cười vui vẻ hạnh phúc như những tấm ảnh xinh đẹp
-                                            này.</p>
-                                    </div><!-- .comment-content -->
-
-                                </article><!-- .comment-body -->
-                            </li><!-- #comment-## -->
+                        <ol class="comment-list" aria-live="polite">
+                            <li role="status">Đang tải lời chúc...</li>
                         </ol>
 
 
@@ -976,25 +949,45 @@
                             style="font-size: 16px; border: none; background: none; cursor: pointer;">
                         <i id="icon" class="fas fa-pause"></i>
                     </button>
+                    </button>
 
                     <script>
                         const audio = document.getElementById("myAudio");
                         const playPauseBtn = document.getElementById("playPauseBtn");
                         const icon = document.getElementById("icon");
 
+                        function resumeAudio(event) {
+                            if (event && playPauseBtn.contains(event.target)) {
+                                return;
+                            }
+
+                            audio.play().then(function () {
+                                document.removeEventListener("pointerdown", resumeAudio);
+                                document.removeEventListener("keydown", resumeAudio);
+                            }).catch(function (error) {
+                                console.log("Chưa thể phát nhạc:", error);
+                            });
+                        }
+
                         // Tự động phát khi trang tải
                         window.addEventListener("load", function () {
                             audio.play().catch(function (error) {
                                 console.log("Trình duyệt chặn autoplay:", error);
                                 icon.className = "fas fa-play";
+                                document.addEventListener("pointerdown", resumeAudio);
+                                document.addEventListener("keydown", resumeAudio);
                             });
                         });
 
                         // Bấm nút để Play / Pause
                         playPauseBtn.addEventListener("click", function () {
                             if (audio.paused) {
-                                audio.play();
-                                icon.className = "fas fa-pause";
+                                audio.play().then(function () {
+                                    document.removeEventListener("pointerdown", resumeAudio);
+                                    document.removeEventListener("keydown", resumeAudio);
+                                }).catch(function (error) {
+                                    console.log("Chưa thể phát nhạc:", error);
+                                });
                             } else {
                                 audio.pause();
                                 icon.className = "fas fa-play";
@@ -1760,6 +1753,156 @@
         r.supports.everythingExceptFlag = r.supports.everythingExceptFlag && !r.supports.flag, r.supports.everything || ((t = r.source || {}).concatemoji ? a(t.concatemoji) : t.wpemoji && t.twemoji && (a(t.twemoji), a(t.wpemoji)))
     });
     //# sourceURL=https://jejuwedding.vn/thiep-cuoi/wp-includes/js/wp-emoji-loader.min.js
+</script>
+<script id="comments-api-loader">
+    (async () => {
+        const commentsList = document.querySelector("#comments .comment-list");
+        const commentsTitle = document.querySelector("#comments .title-comments");
+        const commentsApi = "https://jejuwedding.vn/thiep-cuoi/wp-json/wp/v2/comments?post=99795&per_page=100&_fields=id,author_name,date,content";
+        const commentForm = document.querySelector("#commentform");
+
+        if (commentForm) {
+            commentForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+                if (commentForm.dataset.submitting === "true") {
+                    return;
+                }
+
+                commentForm.dataset.submitting = "true";
+                const submitButton = commentForm.querySelector('[type="submit"]');
+                if (submitButton) {
+                    submitButton.disabled = true;
+                }
+
+                const frame = document.createElement("iframe");
+                frame.name = `comment-response-${Date.now()}`;
+                frame.hidden = true;
+                frame.title = "Phản hồi gửi lời chúc";
+                frame.srcdoc = "<!doctype html>";
+
+                let frameReady = false;
+                let timedOut = false;
+                const timeout = window.setTimeout(() => {
+                    timedOut = true;
+                    commentForm.dataset.submitting = "false";
+                    commentForm.removeAttribute("target");
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                    }
+                    frame.remove();
+                }, 20000);
+
+                frame.addEventListener("load", () => {
+                    if (timedOut) {
+                        return;
+                    }
+
+                    if (!frameReady) {
+                        frameReady = true;
+                        commentForm.target = frame.name;
+                        HTMLFormElement.prototype.submit.call(commentForm);
+                        return;
+                    }
+
+                    window.clearTimeout(timeout);
+                    window.location.reload();
+                });
+
+                document.body.append(frame);
+            });
+        }
+
+        if (!commentsList || !commentsTitle) {
+            return;
+        }
+
+        const showStatus = (message) => {
+            const item = document.createElement("li");
+            item.setAttribute("role", "status");
+            item.textContent = message;
+            commentsList.replaceChildren(item);
+        };
+
+        try {
+            const response = await fetch(commentsApi, { cache: "no-store" });
+            if (!response.ok) {
+                throw new Error(`Comments API returned ${response.status}`);
+            }
+
+            const comments = await response.json();
+            if (!Array.isArray(comments)) {
+                throw new Error("Comments API returned an unexpected response");
+            }
+
+            commentsTitle.textContent = `${comments.length} lời chúc`;
+            commentsList.replaceChildren();
+
+            if (comments.length === 0) {
+                showStatus("Chưa có lời chúc nào.");
+                return;
+            }
+
+            for (const comment of comments) {
+                const item = document.createElement("li");
+                item.id = `comment-${comment.id}`;
+                item.className = "comment";
+
+                const article = document.createElement("article");
+                article.id = `div-comment-${comment.id}`;
+                article.className = "comment-body";
+
+                const author = document.createElement("div");
+                author.className = "comment-author vcard";
+
+                const authorName = document.createElement("b");
+                authorName.className = "fn";
+                authorName.textContent = comment.author_name || "Khách";
+                author.append(authorName);
+
+                const says = document.createElement("span");
+                says.className = "says";
+                says.textContent = " viết:";
+                author.append(says);
+                article.append(author);
+
+                const metadata = document.createElement("div");
+                metadata.className = "comment-metadata";
+                const time = document.createElement("time");
+                time.dateTime = comment.date || "";
+                time.textContent = comment.date ? comment.date.replace("T", " ") : "";
+                metadata.append(time);
+                article.append(metadata);
+
+                const content = document.createElement("div");
+                content.className = "comment-content";
+                const parsedContent = new DOMParser().parseFromString(
+                    comment.content?.rendered || "",
+                    "text/html"
+                );
+                const paragraphs = parsedContent.body.querySelectorAll("p");
+
+                if (paragraphs.length > 0) {
+                    for (const sourceParagraph of paragraphs) {
+                        const paragraph = document.createElement("p");
+                        paragraph.textContent = sourceParagraph.textContent || "";
+                        content.append(paragraph);
+                    }
+                } else {
+                    const paragraph = document.createElement("p");
+                    paragraph.textContent = parsedContent.body.textContent || "";
+                    content.append(paragraph);
+                }
+
+                article.append(content);
+                item.append(article);
+                commentsList.append(item);
+            }
+        } catch (error) {
+            console.error("Không thể tải lời chúc từ API:", error);
+            commentsTitle.textContent = "Lời chúc";
+            showStatus("Không tải được lời chúc. Vui lòng tải lại trang.");
+        }
+    })();
 </script>
 </body>
 
